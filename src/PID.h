@@ -39,9 +39,12 @@ class PID {
   double i_error;
   double d_error;
 
+  double previous_cte;
+  bool is_initialized;
+
   /**
    * PID Coefficients
-   */ 
+   */
   double Kp;
   double Ki;
   double Kd;
