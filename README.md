@@ -1,6 +1,8 @@
 # CarND-Controls-PID
 Self-Driving Car Engineer Nanodegree Program
 
+[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+
 ---
 
 ## Dependencies
@@ -37,62 +39,62 @@ Fellow students have put together a guide to Windows set-up for the project [her
 
 Tips for setting up your environment can be found [here](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/0949fca6-b379-42af-a919-ee50aa304e6a/lessons/f758c44c-5e40-4e01-93b5-1a82aa4e044f/concepts/23d376c7-0195-4276-bdf0-e02f1f3c665d)
 
-## Editor Settings
+## Rubric Points
 
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
+1) Your code should compile. Given that we've made CMakeLists.txt as general as possible, it's recommend that you do not change it unless you can guarantee that your changes will still compile on any platform.
 
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
+    Code is able to compile.
 
-## Code Style
+2) The PID procedure follows what was taught in the lessons. It's encouraged to be creative, particularly around hyperparameter tuning/optimization. However, the base algorithm should follow what's presented in the lessons.
 
-Please (do your best to) stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
+    Base algorithm follows what is presented in the lessons.
 
-## Project Instructions and Rubric
+3) Describe the effect each of the P, I, D components had in your implementation. Student describes the effect of the P, I, D component of the PID algorithm in their implementation. Is it what you expected?
+Visual aids are encouraged, i.e. record of a small video of the car in the simulator and describe what each component is set to.
 
-Note: regardless of the changes you make, your project must be buildable using
-cmake and make!
+    Detailed reflection and also effect of each component (P, I, D) is given in Reflection section of this README.
 
-More information is only accessible by people who are already enrolled in Term 2
-of CarND. If you are enrolled, see [the project page](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/e8235395-22dd-4b87-88e0-d108c5e5bbf4/concepts/6a4d8d42-6a04-4aa6-b284-1697c0fd6562)
-for instructions and the project rubric.
+4) Describe how the final hyperparameters were chosen. Student discusses how they chose the final hyperparameters (P, I, D coefficients). This could be have been done through manual tuning, twiddle, SGD, or something else, or a combination!
 
-## Hints!
+    In Reflection section of this README, there is explanation on how final hyperparameters are choosen.
 
-* You don't have to follow this directory structure, but if you do, your work
-  will span all of the .cpp files here. Keep an eye out for TODOs.
+5) The vehicle must successfully drive a lap around the track. No tire may leave the drivable portion of the track surface. The car may not pop up onto ledges or roll over any surfaces that would otherwise be considered unsafe (if humans were in the vehicle).
 
-## Call for IDE Profiles Pull Requests
+    Vehicle is able to complete full lap around the track at 30 mph. No tire leaves the drivable portion of the track surface at any given moment.
 
-Help your fellow students!
+## Reflection
 
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to we ensure
-that students don't feel pressured to use one IDE or another.
+### Parameter Tuning
 
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
+When working with PID Controllers, most important part is hyperparamter tuning. Each of the parameters, P, I and D has it's own role in achieveing good controll perforamnces. 
 
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
+Hyperparameter tuning can be done using different methods such as [Twiddle](https://martin-thoma.com/twiddle/), SGD, Zeigler-Nichols Method and others. In this solution manual (Trial and error) tuning has been used. General description of this process as stated [here](https://www.electronicshub.org/pid-controller-working-and-tuning-methods/) in section "Trial and Error Method":
 
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
 
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
+1) Set integral and derivative terms to zero first and then increase the proportional gain until the output of the control loop oscillates at a constant rate. This increase of proportional gain should be in such that response the system becomes faster provided it should not make system unstable.
+2) Once the P-response is fast enough, set the integral term, so that the oscillations will be gradually reduced. Change this I-value until the steady state error is reduced, but it may increase overshoot.
+3) Once P and I parameters have been set to a desired values with minimal steady state error, increase the derivative gain until the system reacts quickly to its set point. Increasing derivative term decreases the overshoot of the controller response.
 
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
+Each of the hyperparameters has it's own role in ensuring stable system:
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+**P** - Proportional component is used to steer car to the center of the road. The larger values of P correspond to steeper (more agresive) steering angles.
+
+**I** - Integral component is used for compensating potential bias for turning in one direction.
+
+**D** - Differential component is responsible for reducing car's oscilations. What this means is that this component reduces car's steering angle as it approaches it's target value, thus making it less likely to overshoot which would than also steer car away from target angle.
+
+Final values of each parameter ended up the same as it is shown in previous lessons.
+
+**P = 0.2**
+
+**I = 0.0001**
+
+**D = 3.0**
+
+Initially, hyperparameters were all set to 0 and than i started with tweaks on P parameter. Once P reached shown value following [behavior](https://www.youtube.com/watch?v=TO9wpKx3jjw) was observed. As speed increased car started oscilating more and more until it finally crashed. This was expected behavior because at this moment, there is no D component set in order to compensate for oscilations.
+
+Next step was tweaking D component, in order to compensate for oscilations. After reaching mentioned value following [behavior](https://www.youtube.com/watch?v=BLEsM4hwFAU) was observed. Oscilations were suppressed and car was much more stable.
+
+Third step was to try out tuning I component. Tweaks of I component did not prove very usefull, so it is kept low. Observed behavior can be seen [here](https://www.youtube.com/watch?v=RPbrb27b2fQ)
+
 
